@@ -47,5 +47,31 @@ def is_part_number(number, line_number, schematic_array):
     check_chars = [schematic_array[i, j] for i, j in to_search]
     if (all([re.search("[\.\d]", char) for char in check_chars])):
         return(False)
-    else:
+    else: # i.e. there is something adjacent that is not a dot or a digit
         return(True)
+    
+
+def ratio_if_gear(star_match, number_search_results):
+    """
+    star_match: A re.match object
+    number_search_results: Three lists of re.match objects with numbers in the lines adjacent to where the star was found
+
+    Returns the gear ratio if star_match is a gear, and returns 0 if it isn't.
+    """
+    j = star_match.span()[0]
+
+    adjacent_numbers = []
+    
+    for line in number_search_results:
+        for number in line:
+            # check if j-1, j, or j+1 are in the columns spanned by the numbers. We use only < (rather than <=) for number.span()[1] because
+            # this endpoint is actually 1 point further to the right than the last number
+            if number.span()[0] <= j-1 < number.span()[1] or number.span()[0] <= j < number.span()[1] or number.span()[0] <= j+1 < number.span()[1]:
+                adjacent_numbers.append(number.group(0))
+
+    if len(adjacent_numbers) == 2:
+        print(f"Two numbers adjacent to asterisk at location {j}: {adjacent_numbers[0]} and {adjacent_numbers[1]}.")
+        return(int(adjacent_numbers[0]) * int(adjacent_numbers[1]))
+    else:
+        print(f"All numbers adjacent to asterisk at location {j}: {adjacent_numbers}")
+        return(0)
