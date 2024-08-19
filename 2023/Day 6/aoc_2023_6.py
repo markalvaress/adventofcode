@@ -30,3 +30,20 @@ ways_to_beat.append(sum(race_3_distances > distances[3]))
 answer_pt_1 = np.prod(ways_to_beat)
 
 # pt 2 -----------------------------------------------------------------------------
+
+# If D is the record distance, T is the total race time, and t in [0,T] is the held down time,
+# then we just need to find the roots of d(t) - D = t(T-t) - D = 0.
+
+def find_roots(a, b, c):
+    x1 = (-b - np.sqrt(b**2 - 4*a*c))/(2*a)
+    x2 = (-b + np.sqrt(b**2 - 4*a*c))/(2*a)
+
+    return [x1, x2]
+
+
+T = int(re.sub("\D", "",  record_times_lines[0]))
+D = int(re.sub("\D", "",  record_times_lines[1]))
+
+roots = find_roots(-1, T, -D)
+
+ways_2_beat = np.floor(roots[0]) - np.floor(roots[1])
